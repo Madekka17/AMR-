@@ -1,0 +1,41 @@
+START
+
+INITIALIZE camera stream
+INITIALIZE motor controller (ROS2 publisher to /cmd_vel)
+INITIALIZE object detection parameters (e.g., target color range)
+
+LOOP while robot is powered ON:
+    CAPTURE image frame from camera
+
+    CONVERT image to HSV color space
+
+    APPLY color threshold to isolate the target object
+
+    FIND contours in the thresholded image
+
+    IF contours are found:
+        SELECT the largest contour (assumed to be the target)
+        COMPUTE bounding box and center of the contour
+
+        CALCULATE error_x = center_x - (image_width / 2)
+
+        IF abs(error_x) > threshold:
+            IF error_x > 0:
+                TURN robot right (set negative angular velocity)
+            ELSE:
+                TURN robot left (set positive angular velocity)
+        ELSE:
+            SET angular velocity to 0 (robot is aligned)
+
+        MOVE robot forward with constant linear speed
+
+    ELSE:
+        STOP robot (no object found)
+
+    DISPLAY the processed image (optional for debugging)
+
+END LOOP
+
+SHUTDOWN camera and stop all motors
+
+END
